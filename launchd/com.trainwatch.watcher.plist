@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.trainwatch.watcher</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/caffeinate</string><string>-i</string><string>-s</string>
+    <string>__DIR__/venv/bin/python</string>
+    <string>__DIR__/train_watch.py</string>
+    <string>--config</string><string>__DIR__/config.yaml</string>
+  </array>
+  <key>WorkingDirectory</key><string>__DIR__</string>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>30</integer>
+  <key>EnvironmentVariables</key><dict><key>PYTHONUNBUFFERED</key><string>1</string></dict>
+  <key>StandardOutPath</key><string>__HOME__/Library/Logs/TrainWatch/watcher.log</string>
+  <key>StandardErrorPath</key><string>__HOME__/Library/Logs/TrainWatch/watcher.log</string>
+</dict>
+</plist>

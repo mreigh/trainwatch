@@ -1,0 +1,63 @@
+# TrainWatch config (shared, in git). Edit, then run:  ./ctl.sh restart
+# Per-machine values (ntfy topic, data_dir) go in config.local.yaml, which overrides this file.
+
+# The YouTube live link (or a local video file path, for testing)
+stream_url: "https://www.youtube.com/live/emkGnUzdx1s"
+
+# How often to look at a frame, in seconds of video
+sample_interval_sec: 0.5
+
+# Box over the tracks as fractions of the frame [x, y, width, height].
+# Set it by running:  venv/bin/python pick_zone.py
+# null = watch the whole frame (lots of false alarms).
+zone: [0.4367, 0.4056, 0.5578, 0.5736]
+
+# motion = fast and simple. yolo = motion, then an AI model confirms it's
+# actually a train (fewer false alarms; run ./setup.sh --yolo first).
+detector: motion
+
+# Detector v2. The zone is chopped into small cells; each cell is checked for
+# "texture changed" (something covering the rails), which ignores brightness swings
+# from clouds, dusk, headlights and the camera's night/IR auto-exposure.
+#   covered = share of cells that look different from the empty tracks
+#   moving  = share of cells that changed since the last look
+motion:
+  start_presence: 0.15      # covered share needed to start an event (lower = more sensitive)
+  start_motion: 0.06        # ...while at least this share is moving
+  motion_only_start: 0.25   # or this much movement alone (a train already in view at startup)
+  start_frames: 2           # samples that must agree before an event starts
+  keep_presence: 0.08       # the event keeps going while covered or moving stays above these
+  keep_motion: 0.04
+  end_seconds: 15           # quiet this long = train has passed
+  min_event_seconds: 3      # ignore anything shorter (fast Amtraks clear the zone in ~4s)
+  min_moving_samples: 3     # must actually see movement (filters exposure jumps, glare)
+  corr_threshold: 0.5       # how different a cell must look (0-1, higher = more sensitive)
+  stationary_reset_sec: 120 # covered but nothing moving this long = rebuild the "empty" view
+  # Optional: different settings while the camera is in night/IR mode, e.g.
+  # night: {start_presence: 0.12, corr_threshold: 0.45}
+  night: {}
+
+yolo:
+  model: yolov8n.pt
+  confidence: 0.35
+  max_checks: 6             # samples to try confirming "train" before calling it a false alarm
+
+alerts:
+  # Pick an unguessable topic name, install the ntfy app, subscribe to it.
+  ntfy_topic: ""   # set per machine in config.local.yaml (blank = no push alerts)
+  ntfy_server: "https://ntfy.sh"
+  quiet_hours: ["23:00", "06:00"]         # e.g. ["23:00", "06:00"]  (keep the quotes) - still logs, just no pings
+  notify_on_start: true
+  notify_on_end: true
+  stream_down_alert_minutes: 30
+
+# Per-sample scores + a small frame every minute, in data/diag/<date>/.
+# This is what lets us tune against real misses / false alarms. ~40 MB/day.
+diagnostics:
+  enabled: true
+  frame_every_sec: 60
+  keep_days: 5
+
+storage:
+  data_dir: data            # relative to this folder
+  keep_snapshots_days: 30

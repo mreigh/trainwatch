@@ -1,0 +1,10 @@
+# Per-machine and generated stuff - never committed
+config.local.yaml
+venv/
+data/
+test_data/
+__pycache__/
+*.pyc
+*.bak
+*.pt
+.DS_Store
