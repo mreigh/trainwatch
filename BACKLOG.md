@@ -13,11 +13,11 @@ Status: `todo` · `doing` · `done` · `blocked`. Top of each phase = next up.
 ## Phase 1: Git + one source of truth (doing)
 | # | Item | Status | Notes |
 |---|---|---|---|
-| 1.1 | Decide where the main repo lives | blocked | Waiting on Matt. Recommended: private GitHub repo. Alternative: bare repo on pickles over Tailscale |
+| 1.1 | Decide where the main repo lives | done | Private GitHub repo: https://github.com/mreigh/trainwatch |
 | 1.2 | `git init` on production, `.gitignore` (venv, data, logs, pycache, backups), first commit = current v2 | done | Production is the known-good baseline |
 | 1.3 | Split config: shared settings committed, per-machine values (ntfy topic, data_dir) in an uncommitted `config.local.yaml` | done | Needed so test and prod can differ without editing code |
 | 1.4 | Turn `TRAINWATCH_PORT.md` into `CLAUDE.md` (context Claude loads every session) + keep `BACKLOG.md` in the repo | done | This is what lets Claude pick up on either laptop |
-| 1.5 | Clone the repo onto the Air as the dev copy | todo | |
+| 1.5 | Clone the repo onto the Air as the dev copy | doing | `~/code/trainwatch` on the Air. Old Air folder renamed `~/Applications/TrainWatch-old` |
 
 ## Phase 2: Test vs production
 | # | Item | Status | Notes |

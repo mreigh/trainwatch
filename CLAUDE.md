@@ -33,7 +33,7 @@ Project folder: `~/Applications/TrainWatch` (the README says `~/TrainWatch`; eit
 - v1 is gone from the folder; a full v1 backup is at `~/TrainWatch-v1-backup-2026-10-08.tgz` on production.
 
 ## How we work
-- **Git** repo on `main`. Deploys to production are tagged `prod-YYYY-MM-DD` (first: `prod-2026-10-09`).
+- **Git** repo on `main`, remote = private GitHub repo https://github.com/mreigh/trainwatch (account `mreigh`, `gh` CLI signed in on prod). Prod checkout: `~/Applications/TrainWatch`. Air dev checkout: `~/code/trainwatch`. Deploys to production are tagged `prod-YYYY-MM-DD` (first: `prod-2026-10-09`).
 - **Code changes happen on the Air (test). Production only receives deploys**, never hand edits. (Until the test env and `deploy.sh` exist, BACKLOG phases 1-2, small bootstrap changes on prod are OK if committed right away.)
 - **Claude owns `BACKLOG.md`**: update statuses as work finishes, add new items as they come up, move finished items to Done with the date. Matt sets priorities. Work one phase at a time.
 - Before starting work, check `git status` and `git log -3` so you know which machine/state you're in (`scutil --get LocalHostName` won't say "pickles"; use `tailscale status --self` or check for `~/Library/LaunchAgents/com.trainwatch.watcher.plist`).
