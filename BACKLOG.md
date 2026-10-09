@@ -10,16 +10,16 @@ Status: `todo` · `doing` · `done` · `blocked`. Top of each phase = next up.
 | 0.2 | Stop the old copy on the Air (`./ctl.sh uninstall`) | done | Avoids double alerts. Run on the Air |
 | 0.3 | Clean up v1 leftovers (`*.bak`, `zz_test`, `requirements-old.txt`) | done | Kept `~/TrainWatch-v1-backup-2026-10-08.tgz` for now |
 
-## Phase 1: Git + one source of truth (doing)
+## Phase 1: Git + one source of truth (done 2026-10-09)
 | # | Item | Status | Notes |
 |---|---|---|---|
 | 1.1 | Decide where the main repo lives | done | Private GitHub repo: https://github.com/mreigh/trainwatch |
 | 1.2 | `git init` on production, `.gitignore` (venv, data, logs, pycache, backups), first commit = current v2 | done | Production is the known-good baseline |
 | 1.3 | Split config: shared settings committed, per-machine values (ntfy topic, data_dir) in an uncommitted `config.local.yaml` | done | Needed so test and prod can differ without editing code |
 | 1.4 | Turn `TRAINWATCH_PORT.md` into `CLAUDE.md` (context Claude loads every session) + keep `BACKLOG.md` in the repo | done | This is what lets Claude pick up on either laptop |
-| 1.5 | Clone the repo onto the Air as the dev copy | doing | `~/code/trainwatch` on the Air. Old Air folder renamed `~/Applications/TrainWatch-old` |
+| 1.5 | Clone the repo onto the Air as the dev copy | done | `~/code/trainwatch` on the Air. Old Air folder renamed `~/Applications/TrainWatch-old` |
 
-## Phase 2: Test vs production
+## Phase 2: Test vs production (next)
 | # | Item | Status | Notes |
 |---|---|---|---|
 | 2.1 | Define environments: **prod** = pickles-data-center (main branch only), **test** = the Air | todo | |
@@ -53,3 +53,5 @@ Status: `todo` · `doing` · `done` · `blocked`. Top of each phase = next up.
 | 2026-10-08 | Diagnosed stream outage (YouTube bot check, cleared on its own after ~14 min) |
 | 2026-10-08 | Upgraded production from v1 to v2 detector; v1 backed up |
 | 2026-10-08 | Quick reference guide written |
+| 2026-10-09 | Phase 0: v2 confirmed on prod, Air copy retired, v1 clutter removed |
+| 2026-10-09 | Phase 1: git + private GitHub repo, config split (`config.local.yaml`), CLAUDE.md, Air dev clone at `~/code/trainwatch` |
