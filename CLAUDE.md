@@ -1,6 +1,6 @@
 # TrainWatch: project context
 
-Read this first. It covers what the project is, how it's built, what's already been fixed, and where it's headed.
+Claude loads this automatically every session, on either laptop. It covers what the project is, how it's built, how we work, and what's already been fixed. The plan of record is `BACKLOG.md`.
 
 ## What it is
 TrainWatch watches a YouTube live railcam (Wauwatosa Historical Society cam on the main line through Milwaukee) 24/7. It detects trains passing through a boxed zone over the tracks, logs every one, saves snapshots, and pushes alerts to Matt's phone via ntfy. Matt mostly cares about **freight** movement.
@@ -13,8 +13,8 @@ TrainWatch watches a YouTube live railcam (Wauwatosa Historical Society cam on t
 ## Machines
 | Name | Role | Notes |
 |---|---|---|
-| `pickles-data-center` | **Production.** Dedicated MacBook running TrainWatch 24/7 | Tailscale IP 100.126.119.58. Screen Sharing + SSH enabled. Should stay plugged in, lid open, auto-updates off. |
-| `mattys-macbook-air` | Matt's daily laptop; travels | Used to remote in via Tailscale. Had the original install at `~/Applications/TrainWatch`; that copy should be shut down once production is confirmed. |
+| `pickles-data-center` | **Production.** Dedicated MacBook running TrainWatch 24/7 | Tailscale IP 100.126.119.58, user `mreigh`. macOS computer name is `BL-mreigh-FVFFX8X8Q6LR` (same machine). Screen Sharing + SSH enabled. Plugged in, lid open, auto-updates off. |
+| `mattys-macbook-air` | Matt's daily laptop; travels. **Dev/test.** | Tailscale 100.73.112.8, user `mattyreighpickles`. Its old launchd jobs are uninstalled (2026-10-09). |
 
 Project folder: `~/Applications/TrainWatch` (the README says `~/TrainWatch`; either works, but it must NOT be in Desktop/Documents/Downloads, because macOS blocks background jobs there).
 
@@ -23,12 +23,20 @@ Project folder: `~/Applications/TrainWatch` (the README says `~/TrainWatch`; eit
 - `common.py`: config loading, stream resolution via yt-dlp, ntfy `notify()`
 - `summary.py`: daily 7 AM recap push, including hours actually watched/coverage %
 - `pick_zone.py`: GUI to drag the zone box over the rails
-- `config.yaml`: all tuning knobs (commented). Restart after edits.
+- `config.yaml`: all tuning knobs (commented), shared, in git. Restart after edits.
+- `config.local.yaml`: per-machine overrides (ntfy topic, later data_dir), merged over `config.yaml` by `common.load_config`. NOT in git; never commit the ntfy topic.
 - `ctl.sh`: `status | logs | today | restart | stop | start | uninstall`
 - `setup.sh`: creates `venv/`, installs launchd jobs (`--yolo` adds the YOLO deps)
 - `launchd/`: three LaunchAgents: `com.trainwatch.watcher` (always on, KeepAlive, wrapped in `caffeinate -i -s`), `.summary` (daily 7 AM), `.update` (Sundays 4 AM, updates yt-dlp)
 - `data/`: `events.csv` (full log), `snapshots/` (kept 30 days), `diag/<date>/samples.csv` + a frame per minute (kept 5 days, ~40 MB/day), heartbeat file
-- `v1_backup/`, `*.bak`, `zz_test`: old clutter, safe to delete
+- `BACKLOG.md`: phased backlog. Claude maintains it.
+- v1 is gone from the folder; a full v1 backup is at `~/TrainWatch-v1-backup-2026-10-08.tgz` on production.
+
+## How we work
+- **Git** repo on `main`. Deploys to production are tagged `prod-YYYY-MM-DD` (first: `prod-2026-10-09`).
+- **Code changes happen on the Air (test). Production only receives deploys**, never hand edits. (Until the test env and `deploy.sh` exist, BACKLOG phases 1-2, small bootstrap changes on prod are OK if committed right away.)
+- **Claude owns `BACKLOG.md`**: update statuses as work finishes, add new items as they come up, move finished items to Done with the date. Matt sets priorities. Work one phase at a time.
+- Before starting work, check `git status` and `git log -3` so you know which machine/state you're in (`scutil --get LocalHostName` won't say "pickles"; use `tailscale status --self` or check for `~/Library/LaunchAgents/com.trainwatch.watcher.plist`).
 
 ## Detector (v2, current)
 The zone is split into ~16px cells. Each cell is compared to a learned "empty tracks" background by **texture correlation**, not brightness, so clouds, dusk, headlights and night/IR auto-exposure don't trigger it.
@@ -62,4 +70,4 @@ Tune against real data: look up the miss or false alarm time in `data/diag/<date
 - **Second location:** the freight line crossing I-94 just south of the Hwy 100 interchange. No public live video cam was found there. Options: WisDOT 511wi.gov traffic cams (still images every 1–2 min, so you'd need a different detector approach), other railfan webcams, or Matt mounting his own IP camera.
 - **Multi-site redesign:** the code currently assumes one stream and one zone. Supporting several sites needs per-site config, zones, logs and alerts.
 - **Hosting:** cloud/VPS won't work, because YouTube blocks data-center IPs. It has to run on a home connection. A Raspberry Pi 5 or N100 mini PC were considered; a dedicated MacBook is the current answer.
-- No version control yet. Initializing git in the project folder is recommended before making more changes.
+- Test vs production environments and multi-laptop workflow: see `BACKLOG.md` phases 1-3.
